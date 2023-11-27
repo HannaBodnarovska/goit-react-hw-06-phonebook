@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Filter.module.css';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateFilter } from '../../store/contactsSlice';
+import styles from './Filter.module.css'; 
 
-const Filter = ({ filter, onChangeFilter, contacts }) => {
-  const [filteredContacts, setFilteredContacts] = useState([]);
+const Filter = () => {
+  const dispatch = useDispatch();
+  const filter = useSelector((state) => state.contacts.filter);
 
-  useEffect(() => {
-    const normalizedFilter = filter.toLowerCase();
-    const filtered = contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-    setFilteredContacts(filtered);
-  }, [filter, contacts]);
+  const handleFilterChange = (e) => {
+    dispatch(updateFilter(e.target.value));
+  };
 
   return (
-    <div>
-      <label className={styles.label}>
-        Find contacts by name
-        <input
-          type="text"
-          name="filter"
-          value={filter}
-          onChange={(e) => onChangeFilter(e.target.value)}
-          className={styles.input}
-        />
+    <div className={styles.label}>
+      <label>
+        Find contacts by name:
+        <input type="text" value={filter} onChange={handleFilterChange} className={styles.input} />
       </label>
-      <ul>
-        {filteredContacts.map((contact) => (
-          <li key={contact.id}>{contact.name}</li>
-        ))}
-      </ul>
     </div>
   );
 };
 
 export default Filter;
-

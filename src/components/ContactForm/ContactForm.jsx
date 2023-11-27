@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../store/contactsSlice';
+import { nanoid } from 'nanoid'; 
+
 import styles from './ContactForm.module.css';
 
-const ContactForm = ({ onAddContact }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -12,12 +16,7 @@ const ContactForm = ({ onAddContact }) => {
       alert('Please fill in all fields');
       return;
     }
-    const newContact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    onAddContact(newContact);
+    dispatch(addContact({ id: nanoid(), name, number }));
     setName('');
     setNumber('');
   };
@@ -26,21 +25,11 @@ const ContactForm = ({ onAddContact }) => {
     <form className={styles.form} onSubmit={handleSubmit}>
       <label>
         Name:
-        <input
-          type="text"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       </label>
       <label>
         Number:
-        <input
-          type="tel"
-          name="number"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        />
+        <input type="tel" value={number} onChange={(e) => setNumber(e.target.value)} />
       </label>
       <button type="submit">Add contact</button>
     </form>

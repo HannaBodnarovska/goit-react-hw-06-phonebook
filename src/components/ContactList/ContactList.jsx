@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import ContactItem from '../ContactItem/ContactItem';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from '../../store/contactsSlice';
 import styles from './ContactList.module.css';
 
-const ContactList = ({ contacts, onDeleteContact }) => {
-  const [contactItems, setContactItems] = useState([]);
+const ContactList = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.list);
 
-  useEffect(() => {
-    const updatedContactItems = contacts.map((contact) => (
-      <ContactItem key={contact.id} contact={contact} onDeleteContact={onDeleteContact} />
-    ));
-    setContactItems(updatedContactItems);
-  }, [contacts, onDeleteContact]);
+  const handleDeleteContact = (id) => {
+    dispatch(deleteContact(id));
+  };
 
-  return <ul className={styles.list}>{contactItems}</ul>;
+  return (
+    <ul className={styles.list}>
+      {contacts.length > 0 ? (
+        contacts.map((contact) => (
+          <li key={contact.id} className={styles.item}>
+            {contact.name}: {contact.number}
+            <button className={styles.button} onClick={() => handleDeleteContact(contact.id)}>Delete</button>
+          </li>
+        ))
+      ) : (
+        <li>No contacts available</li>
+      )}
+    </ul>
+  );
 };
 
 export default ContactList;
