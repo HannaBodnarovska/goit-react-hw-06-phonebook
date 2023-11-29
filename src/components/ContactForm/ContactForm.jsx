@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../store/contactsSlice';
 import { nanoid } from 'nanoid'; 
-
 import styles from './ContactForm.module.css';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.list);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -16,6 +16,16 @@ const ContactForm = () => {
       alert('Please fill in all fields');
       return;
     }
+
+    const isContactExists = contacts.find(contact =>
+      contact.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isContactExists) {
+      alert('This contact already exists');
+      return;
+    }
+
     dispatch(addContact({ id: nanoid(), name, number }));
     setName('');
     setNumber('');
