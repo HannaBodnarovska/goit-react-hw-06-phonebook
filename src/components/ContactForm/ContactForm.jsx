@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { nanoid } from 'nanoid';
 import { addContact } from '../../store/contactsSlice';
-import { nanoid } from 'nanoid'; 
 import styles from './ContactForm.module.css';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts.list);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'name') {
+      setName(value);
+    } else if (name === 'number') {
+      setNumber(value);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,17 +24,12 @@ const ContactForm = () => {
       alert('Please fill in all fields');
       return;
     }
-
-    const isContactExists = contacts.find(contact =>
-      contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isContactExists) {
-      alert('This contact already exists');
-      return;
-    }
-
-    dispatch(addContact({ id: nanoid(), name, number }));
+    const newContact = {
+      id: nanoid(),
+      name,
+      number,
+    };
+    dispatch(addContact(newContact));
     setName('');
     setNumber('');
   };
@@ -35,11 +38,11 @@ const ContactForm = () => {
     <form className={styles.form} onSubmit={handleSubmit}>
       <label>
         Name:
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <input type="text" name="name" value={name} onChange={handleChange} />
       </label>
       <label>
         Number:
-        <input type="tel" value={number} onChange={(e) => setNumber(e.target.value)} />
+        <input type="tel" name="number" value={number} onChange={handleChange} />
       </label>
       <button type="submit">Add contact</button>
     </form>
